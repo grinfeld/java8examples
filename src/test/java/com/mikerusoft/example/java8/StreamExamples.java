@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class StreamExamples {
 
     @Test
-    public void contextLoads() {
+    public void list2mapOfLists() {
         Map<String, String> book1Details = new HashMap<>();
         book1Details.put("1234", "author1");
         book1Details.put("5678", "author2");
