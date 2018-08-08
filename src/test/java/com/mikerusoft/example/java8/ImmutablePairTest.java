@@ -33,42 +33,62 @@ public class ImmutablePairTest {
                 .isNotSameAs(ImmutablePair.empty()).isEqualTo(ImmutablePair.of(1L, 2L));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void map_whenLeftMapperFuncIsNull_expectedNullPointerException() {
+        ImmutablePair.of("1", "2").map(null, r -> r);
+    }
 
     @Test(expected = NullPointerException.class)
-    public void map_whenMapperFuncIsNull_expectedNullPointerException() {
-        ImmutablePair.of("1", "2").map(null);
+    public void map_whenRightMapperFuncIsNull_expectedNullPointerException() {
+        ImmutablePair.of("1", "2").map(l -> l, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void map_whenMappersFuncAreNulls_expectedNullPointerException() {
+        ImmutablePair.of("1", "2").map(null, null);
+    }
+
+    @Test
+    public void map_whenValidMapperFunctions_expectedNewPair() {
+        assertThat(ImmutablePair.of("1", "2").map(l -> l + "1", r -> r + "2"))
+                .isNotNull().isNotSameAs(ImmutablePair.empty()).isEqualTo(ImmutablePair.of("11", "22"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void get_whenMapperFuncIsNull_expectedNullPointerException() {
+        ImmutablePair.of("1", "2").get(null);
     }
 
     @Test(expected = RuntimeException.class)
-    public void map_whenMapperFuncThrowsException_expectedRuntimeException() {
-        ImmutablePair.of("1", "2").map(pair -> {
+    public void get_whenMapperFuncThrowsException_expectedRuntimeException() {
+        ImmutablePair.of("1", "2").get(pair -> {
             throw new RuntimeException();
         });
     }
 
     @Test
-    public void map_withNoDefSupplier_whenMapperEmptyPairMapWithGetLeftGetRight_expectedNull() {
-        String map = ImmutablePair.of("1", "2").filter(p -> false).map(p -> p.getLeft() + "_" + p.getRight());
+    public void get_withNoDefSupplier_whenMapperEmptyPairMapWithGetLeftGetRight_expectedNull() {
+        String map = ImmutablePair.of("1", "2").filter(p -> false).get(p -> p.getLeft() + "_" + p.getRight());
         assertThat(map).isNull();
     }
 
     @Test
-    public void map_withDefSupplier_whenMapperEmptyPairMapWithGetLeftGetRight_expectedNull() {
+    public void get_withDefSupplier_whenMapperEmptyPairMapWithGetLeftGetRight_expectedNull() {
         assertThat(ImmutablePair.of("1", "2").filter(p -> false)
-                .map(p -> p.getLeft() + "_" + p.getRight(), () -> "staaam"))
+                .get(p -> p.getLeft() + "_" + p.getRight(), () -> "staaam"))
                 .isNotNull().isEqualTo("staaam");
     }
 
     @Test
-    public void map_withNoDefSupplier_whenConcatenateLeftRight_expectedConcatenatedString() {
-        String map = ImmutablePair.of("1", "2").map(p -> p.getLeft() + "_" + p.getRight());
-        assertThat(map).isNotNull().isEqualTo("1_2");
+    public void get_withNoDefSupplier_whenConcatenateLeftRight_expectedConcatenatedString() {
+        String get = ImmutablePair.of("1", "2").get(p -> p.getLeft() + "_" + p.getRight());
+        assertThat(get).isNotNull().isEqualTo("1_2");
     }
 
     @Test
-    public void map_withDefSupplier_whenConcatenateLeftRight_expectedConcatenatedString() {
-        String map = ImmutablePair.of("1", "2").map(p -> p.getLeft() + "_" + p.getRight(), () -> "staaam");
-        assertThat(map).isNotNull().isEqualTo("1_2");
+    public void get_withDefSupplier_whenConcatenateLeftRight_expectedConcatenatedString() {
+        String get = ImmutablePair.of("1", "2").get(p -> p.getLeft() + "_" + p.getRight(), () -> "staaam");
+        assertThat(get).isNotNull().isEqualTo("1_2");
     }
 
 
@@ -129,6 +149,15 @@ public class ImmutablePairTest {
         ImmutablePair.of("1", "2").filter(p -> false).getLeft();
     }
 
+    @Test
+    public void getLeft_whenValidPair_expectedLeftValue() {
+        assertThat(ImmutablePair.of(1, 2).getLeft()).isNotNull().isEqualTo(1);
+    }
+
+    @Test
+    public void getRight_whenValidPair_expectedLeftValue() {
+        assertThat(ImmutablePair.of(1, 2).getRight()).isNotNull().isEqualTo(2);
+    }
 
     @Test
     public void getRightElse_whenNonEmpty_expectedOriginalPair() {

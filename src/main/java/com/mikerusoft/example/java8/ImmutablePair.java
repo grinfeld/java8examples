@@ -46,12 +46,19 @@ public class ImmutablePair<L, R> implements Serializable {
         return isEmpty() ? empty() : mapper.apply(this);
     }
 
-    public <N> N map(Function<ImmutablePair<L,R>, N> mapper) {
+    public <L1, R1> ImmutablePair<L1, R1> map(Function<L, L1> leftMapper, Function<R, R1> rightMapper) {
+        Objects.requireNonNull(leftMapper);
+        Objects.requireNonNull(rightMapper);
+        return isEmpty() ? empty() :
+                ImmutablePair.of(leftMapper.apply(this.getLeft()), rightMapper.apply(this.getRight()));
+    }
+
+    public <N> N get(Function<ImmutablePair<L,R>, N> mapper) {
         Objects.requireNonNull(mapper);
         return isEmpty() ? null : mapper.apply(this);
     }
 
-    public <N> N map(Function<ImmutablePair<L,R>, N> mapper, Supplier<N> defSupplier) {
+    public <N> N get(Function<ImmutablePair<L,R>, N> mapper, Supplier<N> defSupplier) {
         Objects.requireNonNull(mapper);
         Objects.requireNonNull(defSupplier);
         return isEmpty() ? defSupplier.get() : mapper.apply(this);
