@@ -1,11 +1,10 @@
 package com.mikerusoft.example.java8;
 
+import com.google.common.base.Functions;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -13,6 +12,26 @@ import java.util.stream.Collectors;
  * @since 7/31/2017.
  */
 public class StreamExamples {
+
+
+    public static Map<String, Long> listOfListsToMapCounters(List<List<String>> input) {
+        return input.stream()
+                .map(HashSet::new)
+                .flatMap(Set::stream)
+                .collect(Collectors.groupingBy(Functions.identity(), Collectors.counting()));
+
+    }
+
+    @Test
+    public void basicTestWithGroupingByAndCounter() {
+        List<List<String>> input = Arrays.asList(
+                Arrays.asList("Mike", "Pavel", "Igor", "Ronen"),
+                Arrays.asList("Mike", "Mike", "Roi"),
+                Arrays.asList("Pavel", "Roi"),
+                Arrays.asList("Pavel", "Pavel")
+        );
+        listOfListsToMapCounters(input).entrySet().forEach(e -> System.out.println(e.getKey() + " -- " + e.getValue()));
+    }
 
     @Test
     public void list2mapOfLists() {
